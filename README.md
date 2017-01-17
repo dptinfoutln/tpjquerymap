@@ -2,8 +2,8 @@
 TP de jQuery mobile associé à l'API Maps.
 
 A faire dans l'ordre :
-    plugin1
-    plugin2
+    plugin1 ->
+    plugin2 ->
     map
 
 Dans les trois dossiers, il faut à chaque fois remplir le .html et le .js.
