@@ -4,7 +4,9 @@ TP de jQuery mobile associé à l'API Maps.
 A faire dans l'ordre :
     plugin1 ->
     plugin2 ->
-    map
+    map ->
+
+    Pour map, les fonctions searchAddressTo et searchAddressFrom sont optionnelles (en dernier).
 
 Dans les trois dossiers, il faut à chaque fois remplir le .html et le .js.
 
