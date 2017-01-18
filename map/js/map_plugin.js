@@ -1,20 +1,39 @@
 /**
- * Created by toms on 1/1/17.
+ * Created by toms on 1/1/2.
  */
 
 /**
  * Searches address or city puts in $("#addressFrom") and displays it on map.
  */
 function searchAddressFrom() {
-   // TODO localiser et afficher la ville entré dans le premier input
+    var geocoder = new google.maps.Geocoder();
+    var address = $("#addressFrom").val();
+    geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            var coords = results[0].geometry.location;
+            $("#map").putMarker({coords: [coords.lat(), coords.lng()]});
+            $("#map").setCenter(coords);
+        } else {
+            alert("Le geocodage n\'a pu etre effectue pour la raison suivante: " + status);
+        }
+    });
 }
 
 /**
  * Searches address or city puts in $("#addressTo") and displays it on map.
  */
 function searchAddressTo() {
-  // TODO localiser et afficher la ville entré dans le deuxième input
-    // TODO humm ça ressemble beaucoup à la précédente ...
+    var geocoder = new google.maps.Geocoder();
+    var address = $("#addressTo").val();
+    geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            var coords = results[0].geometry.location;
+            $("#map").putMarker({coords: [coords.lat(), coords.lng()]});
+            $("#map").setCenter(coords);
+        } else {
+            alert("Le geocodage n\'a pu etre effectue pour la raison suivante: " + status);
+        }
+    });
 }
 
 
@@ -23,14 +42,10 @@ function searchAddressTo() {
  * Displays itinerary from departure point to final point.
  * Sets and displays time and distance between points.
  */
-function setItinerary() {
+function goToAddress() {
     $("#map").createMap(); // clear map
-
-    // TODO appel à deux API de Google via deux fonctions de notre plugin, une pour le trajet, l'autre pour obtenir
-    // TODO les informations du trajet
-    // TODO appel à addItinerary et specifyItineraryOptions -> n'oubliez pas les options à définir
-    /*******/
-
+    $("#map").addItinerary({origin: $("#from").val(), destination: $("#to").val(), travelMode: $("#travel_mode").val()});
+    $("#map").specifyItineraryOptions({travelMode: $("#travel_mode").val()});
     $("#text_from").html("");
     $("#text_to").html("");
     $("#distance").html("");
@@ -51,23 +66,34 @@ $(function() {
      */
     $.fn.createMap = function (options) {
         // default options for map initialization -> zoom , center and map
+        options = $.extend({
+            zoom: 8,
+            coords: [48.895651, 2.290569],
+            type: "ROADMAP"
+        }, options);
 
-        //TODO mettre les options par défaut de la carte
-        /***************************************/
-
-
-        //TODO sélectionner l'option d'affichage de la carte en fonction de l'option sélectionné
-        //TODO Je suis pas sûr mais ça doit être un switch ou quelque chose comme ça ...
-        /**************************************/
+        // map type options
+        // ( four map options  available -> https://developers.google.com/maps/documentation/javascript/reference#MapOptions )
+        switch (options.type) {
+            case 'ROADMAP':
+            case 'SATELLITE':
+            case 'HYBRID':
+            case 'TERRAIN':
+                options.type = google.maps.MapTypeId[options.type];
+                break;
+            default:
+                options.type = google.maps.MapTypeId.ROADMAP;
+                break;
+        }
 
         // iterator
         this.each(function () {
             // map initialization
-
-            //TODO créer la carte
-            /****************************/
-
-            //a
+            var map = new google.maps.Map(this, {
+                zoom: options.zoom,
+                center: new google.maps.LatLng(options.coords[0], options.coords[1]),
+                mapTypeId: options.type,
+            });
             $(this).data('googleMap', map);
 
         });
@@ -82,14 +108,19 @@ $(function() {
      * @returns {$}
      */
     $.fn.putMarker = function (options){
-
-        //TODO mettre les options d'un marqueur par défaut -> coords
-        /*********************************************************/
+        // default marker options if options are not indicates by user
+        options = $.extend({
+            coords: [48.895651, 2.290569],
+            draggable: true
+        }, options);
 
         this.each(function () {
-
-            //TODO créer un marqueur sur la carte
-            /***********************************/
+            // adds marker on map at marker's position latitude and longitude
+            var marker = new google.maps.Marker({
+                map: $(this).data('googleMap'),
+                position: new google.maps.LatLng(options.coords[0], options.coords[1]),
+                draggable: options.draggable
+            });
 
             // adds markers on local database
             var markers = [];
@@ -101,8 +132,6 @@ $(function() {
     }
 
 
-
-    // TODO Rien du tout à contempler :)
     /**
      * Deletes a marker from map and local navigator database.
      * @param options
@@ -145,31 +174,42 @@ $(function() {
      * @param options
      */
     $.fn.addItinerary = function (options) {
-
-        //TODO ajouter les options par défaut d'un itinéraire
-        /**********************************************/
+        options = $.extend({
+            origin: "Paris",
+            destination: "Marseille",
+            travelMode: 'DRIVING'
+        }, options);
 
         // travel modes available
         switch (options.travelMode) {
             case 'TRANSIT':
-                options.type = /***********/;
+                options.type = google.maps.TravelMode.TRANSIT;
                 break;
             case 'BICYCLING':
-                options.type = /***********/;
+                options.type = google.maps.TravelMode.BICYCLING;
                 break;
             case 'WALKING':
-                options.type = /***********/;
+                options.type = google.maps.TravelMode.WALKING;
                 break;
             case 'DRIVING':
-                options.type = /***********/;
+                options.type = google.maps.TravelMode.DRIVING;
                 break;
         }
 
         // displays itinerary from specific travel mode
-
-        //TODO appel à DirectionsService et DirectionsRenderer pour le tracé de l'itinéraire
-        /************************************************************/
-
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer;
+        directionsService.route({
+            origin: options.origin,
+            destination: options.destination,
+            travelMode: options.travelMode
+        }, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(response);
+            } else {
+                alert('Echec dû à ' + status);
+            }
+        });
         directionsDisplay.setMap($(this).data('googleMap'));
     }
 
@@ -180,51 +220,53 @@ $(function() {
      */
     $.fn.specifyItineraryOptions = function (options) {
 
-        //TODO définir les options par défaut de la fonction
-        //TODO Je vous demande juste travelMode, avoidTolls et avoidHighways ....
-        /*****************************************************************/
+        options = $.extend({
+            travelMode: 'DRIVING',
+            avoidHighways: false,
+            avoidTolls: false
+        }, options);
 
         switch (options.travelMode) {
             case 'TRANSIT':
-                options.type =/***********/;
+                options.type = google.maps.TravelMode.TRANSIT;
                 break;
             case 'BICYCLING':
-                options.type = /***********/;
+                options.type = google.maps.TravelMode.BICYCLING;
                 break;
             case 'WALKING':
-                options.type = /***********/;
+                options.type = google.maps.TravelMode.WALKING;
                 break;
             case 'DRIVING':
-                options.type = /***********/;
+                options.type = google.maps.TravelMode.DRIVING;
                 break;
         }
 
-        //TODO appel a DistanceMatrixService pour obtenir diverses infos sur l'itineraire
-        //TODO origins, destinations, travelMode, avoidHighways, avoidTolls
-        //TODO ne pas oublier la fonction de callback à définir plus bas
-        /*************************************/
-
-        service = new google.maps./******/();
+        // Google API which calcultaes and returns specific data from itinerary.
+        service = new google.maps.DistanceMatrixService();
 
         service.getDistanceMatrix(
             {
-                /**********/
+                origins: [$("#from").val()],
+                destinations: [$("#to").val()],
+                travelMode: options.travelMode,
+                avoidHighways: options.avoidHighways,
+                avoidTolls: options.avoidTolls
             },
-            /*****/
+            callback
         );
 
         switch ($("#travel_mode").val()) {
             case 'TRANSIT':
-                options.type = /***********/;
+                options.type = google.maps.TravelMode.TRANSIT;
                 break;
             case 'BICYCLING':
-                options.type = /***********/;
+                options.type = google.maps.TravelMode.BICYCLING;
                 break;
             case 'WALKING':
-                options.type = /***********/;
+                options.type = google.maps.TravelMode.WALKING;
                 break;
             case 'DRIVING':
-                options.type = /***********/;
+                options.type = google.maps.TravelMode.DRIVING;
                 break;
         }
 
@@ -246,47 +288,13 @@ $(function() {
                 break;
         }
 
-        //TODO mettre la fonction de callback juste après le commentaire
+
         /**
          * Gets and displays specific data from itinerary -> time, distance and addresses.
          *                                  Function call with .fn.specifyItineraryOptions
          * @param response
          * @param status
          */
-
-
-
-        // TODO Y'a de la place, beaucoup de place ....
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //TODO Je suis sympa c'est déjà fait :) :)
         function callback(response, status) {
             var orig = document.getElementById("from"),
                 dest = document.getElementById("to"),
