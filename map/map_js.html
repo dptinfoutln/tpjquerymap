@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY"></script> ->//TODO clé à modifier ici
+
+    <script type="text/javascript" src="js/map_plugin.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            <!-- affichage de la carte -->
+            <div class="col-sm-9">
+                <div id="map" style="width: 600px; height: 600px;"></div>
+            </div>
+
+            <!-- affichage des données obtenues via le tracé d'itinéraire -->
+            <div class="col-sm-3">
+                <input id="text_from">Lieu de départ. </input>
+                <br/>
+                <input id="text_to">Lieu d'arrivée. </input>
+                <br/>
+                <input id="distance">Distance. </input>
+                <br/>
+                <input id="duration">Durée. </input>
+                <br/>
+                <select id="highways">
+                    <option value="YES">AVEC AUTOROUTES</option>
+                    <option value="NO">SANS AUTOROUTES</option>
+                </select>
+
+                <select id="toll" >
+                    <option value="YES">AVEC PEAGES</option>
+                    <option value="NO">SANS PEAGES</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <input type="text" id="from" >
+            </div>
+
+            <div class="col-sm-3">
+                <input type="text" id="to" >
+                <div id="test"></div>
+            </div>
+
+            <!-- mode de transport pour les itinéraires -->
+            <div class="col-sm-3">
+                <select id="travel_mode" >
+                    <option value="DRIVING">DRIVING MODE</option>
+                    <option value="WALKING">WALKING MODE</option>
+                    <option value="BICYCLING">BICYCLING MODE</option>
+                    <option value="TRANSIT">TRANSIT MODE</option>
+                </select>
+            </div>
+
+            <!-- mettre ici l'appel à la créatino d'itinéraire -->
+            <div class="col-sm-3">
+                <button id="go" onclick="//TODO une fonction a appeler">TRACER l'ITINERAIRE</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Bouton pour l'appel à la géolocalisation des villes entrées en paramètres -->
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <button id="getFrom" onclick="//TODO une fonction à appeler">POSITION VILLE DE DEPART</button>
+            </div>
+            <div class="col-sm-3">
+                <button id="getTo" onclick="searchAddressTo()">POSITION VILLE D'ARRIVEE</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        var lstorage = window.localStorage;
+        //Object storage
+        var markers = [];
+
+        $(function () {
+                var lstorage = window.localStorage;
+                lstorage.myKey = 'lstorage';
+
+                $("#map").createMap();
+                /* tests pour montrer que ça fonctionne */
+                $("#map").putMarker({coords: [48,2]});
+                $("#map").putMarker({coords: [49,2]});
+                $("#map").putMarker({coords: [50,2]});
+                $("#map").deleteMarker({coords: [49,2]});
+
+                $("#from").html("");
+                $("#to").html("");
+        });
+    </script>
+
+</body>
+</html>

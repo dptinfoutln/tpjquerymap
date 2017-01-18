@@ -1,0 +1,37 @@
+body
+{
+    background-color: #555;
+}
+
+.message
+{
+    padding: 5px 5px 5px 5px;
+}
+
+.username
+{
+    font-weight: strong;
+    color: #ff8000;
+}
+
+.verified .username
+{
+    color: #0f0;
+}
+
+.me .username
+{
+    color: #00f;
+}
+
+.error
+{
+    font-weight: strong;
+    color: #f00;
+}
+
+.msgContainerDiv
+{
+    overflow-y: scroll;
+    height: 250px;
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title> plugin</title>
+    <link rel="stylesheet" href="jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="jquery.mobile-1.4.5.min.js"></script>
+    <script type="text/javascript">
+        $(function()
+        {
+            //todo appeler votre plugin sur les liens avec les parametres par defauts
+            //todo appeler votre plugin sur les titres en affectant que quelques parametres entre autre callback
+            //todo lier l'appel a alert au callback
+                //alert("voila ce que contien data "+data);
+            // on passe donc en parametre une fonction
+            //$('h1').secondplugin({"vitesseFadeIn": 2350,"vitesseFadeOut": "normal"});
+
+        });
+    </script>
+
+
+</head>
+<body>
+<div data-role="page" id="plugin" data-theme="b">
+    <div data-role="header">
+        <h1>le titre</h1>
+    </div>
+
+    <div data-role="content">
+        <div data-role="fieldcontain">
+            <label><strong>vous allez tester votre <a href="#"> plugin  </a> le but est que les  <a href="#"> lien </a> réagisse au passage de la <a href="#"> souris </a> les <a href="#"> todo </a>  doivent étre fait dans l'<a href="#"> ordre </a>  mais leur position ne <a href="#"> correspond pas </a>  forcement a l'endroit ou vous dever coder </strong></label>
+        </div>
+    </div>
+
+    <div data-role="footer">
+        <h4>plug</h4>
+    </div>
+</div>
+
+
+</div>
+
+</body>
+</html>
